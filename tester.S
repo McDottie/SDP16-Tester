@@ -31,40 +31,6 @@ main:
 	bl test_memory
 	bl migrate_code
 
-delay:
-	b .
-
-test_leds:
-	mov	r0, IO_ADDR & 0x00FF
-	movt r0, (IO_ADDR >> 8) & 0x00FF
-	mov	r1, UINT16_MAX & 0x00FF
-	movt r1, (UINT16_MAX >> 8) & 0x00FF
-	mov r2, #0
-	for_led:
-		cmp r2, r1
-		bhs end_for_led
-
-		str r2, [r0,r2]
-		push r0
-		push r1
-		push r2
-		;ldr r0, DELAY_Ms
-		bl delay
-		pop r2
-		pop r1
-		pop r0
-
-		add r2, r2, #1
-		b for_led
-	end_for_led:
-	mov PC, LR
-
-test_io:
-	b .
-
-test_buttons:
-	b .
-
 test_memory: ;r0 start address | r1 finish address
 	mov	r2, KNOWN_PATTERN & 0x00FF
 	movt r2, (KNOWN_PATTERN >> 8) & 0x00FF
