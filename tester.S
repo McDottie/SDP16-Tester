@@ -1,7 +1,6 @@
 	.equ STACK_SIZE,     64
 	.equ UINT16_MAX,     0xFFFF
-	.equ IO_ADDR,	     0x1234 
-	.equ MIDWAY, 	     0x7FFE
+	.equ MIDWAY, 		 0x3FFF
 	.equ KNOWN_PATTERN,  0xAAAA
 	.equ NKNOWN_PATTERN, 0x5555
 	
@@ -20,17 +19,33 @@ main_addr:
 
 	.text
 main:
-	;bl test_leds
-	;bl test_io
-	;bl test_buttons
-	mov	r0, MIDWAY & 0x00FF
-	movt r0, (MIDWAY >> 8) & 0x00FF
-	mov	r1, 0xFF
-	movt r1, 0xFF
+	ldr	r2, start_addr_addr
+	ldr r3, end_addr_addr
 	
+	ldr r0, [r2]
+	ldr r1, [r3]
+	
+	push r2
+	push r3
 	bl test_memory
+	pop r3
+	pop r2
+
+	mov r0, #0
+	mov	r1, MIDWAY & 0x00FF
+	movt r1, (MIDWAY >> 8) & 0x00FF
+
+	str r0, [r2]
+	str r1, [r3]
+
 	bl migrate_code
 
+end_addr_addr:
+	.word end_addr
+
+start_addr_addr:
+	.word start_addr
+	
 test_memory: ;r0 start address | r1 finish address
 	mov	r2, KNOWN_PATTERN & 0x00FF
 	movt r2, (KNOWN_PATTERN >> 8) & 0x00FF
@@ -109,6 +124,12 @@ stack_top_addr2:
 
 main_addr2:
 	.word main
+
+start_addr:
+	.word MIDWAY
+
+end_addr:
+	.word 0x7FFE
 
 	.section .bss
 

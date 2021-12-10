@@ -1,5 +1,5 @@
 	.equ STACK_SIZE,     64
-	.equ IO_ADDR,	     0x1234
+	.equ IO_ADDR,	     0xFF00
 	.section .startup
 	b	_start
 	b	.
@@ -24,10 +24,10 @@ test_output:
 	movt r1, (IO_ADDR >> 8) & 0x00FF
     mov r2, 0x0FF
     test_io_for:
-        ldr r0, [r1] 
+        str r0, [r1] 
         add r0, r0, #1
         cmp r0, r2
-        bl  test_io_for
+        b  test_io_for
 
     test_io_for_end:
     mov PC, LR
