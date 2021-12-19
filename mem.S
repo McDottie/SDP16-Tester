@@ -1,6 +1,6 @@
 	.equ STACK_SIZE,     64
 	.equ UINT16_MAX,     0xFFFF
-	.equ MIDWAY, 		 0x3FFF
+	.equ MIDWAY, 		 0x3FFE
 	.equ KNOWN_PATTERN,  0xAAAA
 	.equ NKNOWN_PATTERN, 0x5555
 	
@@ -68,11 +68,11 @@ test_memory: ;r0 start address | r1 finish address
 	mov r3, #1
 	cmp r0, r3
 	bne end_err_mem
-	mov r0, #1
+	mov r0, #0
 	b return_mem
 	
 	end_err_mem:
-		mov	r0, #0
+		mov	r0, #1
 	return_mem:
 		pop LR
 		mov PC, LR
