@@ -1,5 +1,17 @@
-	.equ STACK_SIZE,     64
-	.equ IO_ADDR,	     0xFF00
+; Ficheiro:  output.S
+; Descricao: Programa que realiza o teste do porto de output da placa SDP16
+; Autor:     Jose Filipe Cruz dos Santos (josefilipe.s@deetc.isel.ipl.pt)
+; Data:      19-12-2021
+
+; Definicao dos valores dos simbolos utilizados no programa
+;
+
+	.equ STACK_SIZE,     64		; Dimensao do stack - 64 B
+	.equ IO_ADDR,	     0xFF00 ; Endereço de memoria dos portos de IO
+
+; Seccao:    .startup
+; Descricao: Guarda o código de arranque do sistema
+;
 	.section .startup
 	b	_start
 	b	.
@@ -13,13 +25,24 @@ stack_top_addr:
 main_addr:
 	.word main
 
+; Seccao:    .text
+; Descricao: Guarda o código do programa
+;
 	.text
+
+; Rotina:    main
+; Descricao: chama uma rotina de teste do output
 main:
 	bl test_output
     b .
 
+; Rotina:    test_output
+; Descricao: Testa o porto de output colocando um valor incrementado a cada 500ms
+;            Interface exemplo: void test_output();
 test_output:
-    mov r0, #1
+    push LR
+
+	mov r0, #1
     mov	r1, IO_ADDR & 0x00FF
 	movt r1, (IO_ADDR >> 8) & 0x00FF
     mov r2, 0x0FF
@@ -27,16 +50,39 @@ test_output:
         str r0, [r1] 
         add r0, r0, #1
         cmp r0, r2
+
+		push r0
+		push r1
+		push r2
+		bl delay
+		pop r2
+		pop r1
+		pop r0
+		
         b  test_io_for
 
     test_io_for_end:
+	pop LR
     mov PC, LR
 
+; Rotina:    delay
+; Descricao: Faz um delay
+;            Interface exemplo: void delay( uint8_t ms );
+; Entradas:  r0 - valor em ms de delay
+delay:
+	delay_for:
+
+	delay_for_end:
+	mov PC, LR
+
+; Seccao:    .data
+; Descricao: Guarda as variáveis globais com um valor inicial definido
+;
 .data
 
-	.section .bss
-
-
+; Seccao:    .stack
+; Descricao: Implementa a pilha com o tamanho definido pelo simbolo STACK_SIZE
+;
 	.section .stack
 
 stack_bottom:

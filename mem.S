@@ -1,9 +1,19 @@
-	.equ STACK_SIZE,     64
-	.equ UINT16_MAX,     0xFFFF
-	.equ MIDWAY, 		 0x3FFE
-	.equ KNOWN_PATTERN,  0xAAAA
-	.equ NKNOWN_PATTERN, 0x5555
-	
+; Ficheiro:  mem.S
+; Descricao: Programa que realiza o teste da memória da placa SDP16
+; Autor:     Jose Filipe Cruz dos Santos (josefilipe.s@deetc.isel.ipl.pt)
+; Data:      19-12-2021
+
+; Definicao dos valores dos simbolos utilizados no programa
+;
+	.equ STACK_SIZE,     64		; Dimensao do stack - 64 B
+	.equ UINT16_MAX,     0xFFFF	; Maior número de 16 bits sem sinal
+	.equ MIDWAY, 		 0x3FFE	; Metade da memória
+	.equ KNOWN_PATTERN,  0xAAAA	; Padrao conhecido
+	.equ NKNOWN_PATTERN, 0x5555	; Negado bit a bit de um padrao conhecido
+
+; Seccao:    .startup
+; Descricao: Guarda o código de arranque do sistema
+;	
 	.section .startup
 	b	_start
 	b	.
@@ -17,7 +27,13 @@ stack_top_addr:
 main_addr:
 	.word main
 
+; Seccao:    .text
+; Descricao: Guarda o código do programa
+;
 	.text
+
+; Rotina:    main
+; Descricao: chama uma rotina de teste para a memória move o código para essa parte da memória e testa o restante
 main:
 	ldr	r2, start_addr_addr
 	ldr r3, end_addr_addr
@@ -117,6 +133,9 @@ migrate_code:
 	pop r6
 	mov pc, r3
 
+; Seccao:    .data
+; Descricao: Guarda as variáveis globais com um valor inicial definido
+;
 .data
 
 stack_top_addr2:
@@ -131,9 +150,9 @@ start_addr:
 end_addr:
 	.word 0x7FFE
 
-	.section .bss
-
-
+; Seccao:    .stack
+; Descricao: Implementa a pilha com o tamanho definido pelo simbolo STACK_SIZE
+;
 	.section .stack
 
 stack_bottom:
