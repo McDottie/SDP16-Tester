@@ -61,8 +61,14 @@ end_addr_addr:
 
 start_addr_addr:
 	.word start_addr
-	
-test_memory: ;r0 start address | r1 finish address
+
+; Rotina:    test_memory
+; Descricao: Testa o porto de input colocando um valor no output e lendo o input
+;            Interface exemplo: int test_memory(int start, int end);
+; Entradas:  r0 - Endereco de inicio de teste.
+;			 r1 - Endereco de memória onde termina o teste. 
+; Saidas: 	 r0 - Sucesso ou erro.
+test_memory:
 	mov	r2, KNOWN_PATTERN & 0x00FF
 	movt r2, (KNOWN_PATTERN >> 8) & 0x00FF
 	push LR
@@ -93,6 +99,13 @@ test_memory: ;r0 start address | r1 finish address
 		pop LR
 		mov PC, LR
 
+; Rotina:    test_memory_aux
+; Descricao: Funcao auxiliar utilizada pela funcao test_memory que escreve padroes na memoria e le de seguida.
+;            Interface exemplo: int test_memory_aux(int start, int end, int pattern);
+; Entradas:  r0 - Endereco de inicio de teste.
+; 			 r1 - Endereco de memória onde termina o teste. 
+;			 r2 - Padrao a ser escrito na memoria.
+; Saidas: 	 r0 - Sucesso ou erro.
 test_memory_aux:
 	sub r1, r1, r0
 	mov r3, #0
@@ -113,6 +126,10 @@ test_memory_aux:
 	return_mem_aux:
 		mov PC, LR
 
+
+; Rotina:    migrate_code
+; Descricao: Funcao que migra o código para a segunda metade da memoria de forma a possibilitar o teste da parte superior da memoria.
+;            Interface exemplo: void migrate_code();
 migrate_code:
 	push r6
 	

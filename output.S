@@ -54,6 +54,7 @@ test_output:
 		push r0
 		push r1
 		push r2
+		mov r0, #200
 		bl delay
 		pop r2
 		pop r1
@@ -67,11 +68,14 @@ test_output:
 
 ; Rotina:    delay
 ; Descricao: Faz um delay
-;            Interface exemplo: void delay( uint8_t ms );
-; Entradas:  r0 - valor em ms de delay
+;            Interface exemplo: void delay( uint8_t ciclos );
+; Entradas:  r0 - valor em ciclos de delay
 delay:
+	mov r1, #0
 	delay_for:
-
+		sub r0, r0, #1
+		cmp r0, r1
+		bne delay_for
 	delay_for_end:
 	mov PC, LR
 
