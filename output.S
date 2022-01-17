@@ -54,7 +54,8 @@ test_output:
 		push r0
 		push r1
 		push r2
-		mov r0, #200
+		mov r0, 0xFF
+		movt r0, 0x02
 		bl delay
 		pop r2
 		pop r1
